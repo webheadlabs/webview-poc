@@ -1,13 +1,54 @@
-<script>
-let found = [];
+<!DOCTYPE html>
+<html>
+<body style="font-family:sans-serif">
+<h2>WebView Bridge PoC</h2>
 
-for (let key in window) {
+<pre id="output">Running...</pre>
+
+<script>
+let output = [];
+
+// Detect Android bridge
+if (window.Android) {
+  output.push("[+] Android bridge detected");
+
+  for (let key in window.Android) {
+    output.push("Method: " + key);
+  }
+
+  // Try calling a common test function
   try {
-    if (typeof window[key] === "object" || typeof window[key] === "function") {
-      found.push(key);
-    }
-  } catch(e) {}
+    window.Android.showToast("PoC executed");
+    output.push("[+] Called Android.showToast()");
+  } catch (e) {
+    output.push("[-] showToast failed: " + e);
+  }
 }
 
-document.body.innerHTML = "<pre>" + found.join("\n") + "</pre>";
+// Detect iOS bridge
+if (window.webkit && window.webkit.messageHandlers) {
+  output.push("[+] iOS bridge detected");
+
+  for (let handler in window.webkit.messageHandlers) {
+    output.push("Handler: " + handler);
+
+    try {
+      window.webkit.messageHandlers[handler].postMessage("PoC");
+      output.push("[+] Called handler: " + handler);
+    } catch (e) {
+      output.push("[-] Failed handler: " + handler);
+    }
+  }
+}
+
+// If nothing found
+if (output.length === 0) {
+  output.push("[-] No bridge detected");
+}
+
+// Show results
+document.getElementById("output").innerText = output.join("\n");
 </script>
+
+</body>
+</html>
